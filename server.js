@@ -1,35 +1,34 @@
-const http = require('http');
-const url = require('url');
-const port = 8080;
+const express = require("express");
+require("dotenv").config();
 
-const VERIFY_TOKEN = "adminbot2025";
+const app = express();
+app.use(express.json());
 
-const server = http.createServer((req, res) => {
-  if (req.method === 'GET') {
-    const query = url.parse(req.url, true).query;
+// Get verify token from environment variables
+const VERIFY_TOKEN = process.env.VERIFY_TOKEN || "dev_secret_token";
 
-    if (query['hub.mode'] === 'subscribe' && query['hub.verify_token'] === VERIFY_TOKEN) {
-      console.log("WEBHOOK VERIFIED");
-      res.writeHead(200, { 'Content-Type': 'text/plain' });
-      res.end(query['hub.challenge']);
-    } else {
-      res.writeHead(403);
-      res.end('Forbidden');
-    }
+// Verification endpoint
+app.get("/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
 
-  } else if (req.method === 'POST') {
-    let body = '';
-    req.on('data', chunk => {
-      body += chunk.toString();
-    });
-    req.on('end', () => {
-      console.log('Incoming message:', body);
-      res.writeHead(200);
-      res.end('OK');
-    });
+  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    console.log("✅ WEBHOOK_VERIFIED");
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
   }
 });
 
-server.listen(port, () => {
-  console.log(`Server running on ${port}`);
+// Incoming messages
+app.post("/webhook", (req, res) => {
+  console.log("📩 INCOMING:", JSON.stringify(req.body, null, 2));
+  res.sendStatus(200);
+});
+
+// Render (and Heroku) will provide process.env.PORT
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`🚀 Webhook server running on port ${PORT}`);
 });
