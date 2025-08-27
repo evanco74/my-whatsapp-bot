@@ -7,12 +7,17 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["whatsapp", "webhook", "bot"],
+  "keywords": [
+    "whatsapp",
+    "webhook",
+    "bot"
+  ],
   "author": "Evans",
   "license": "ISC",
   "dependencies": {
-    "express": "^5.1.0",
+    "axios": "^1.11.0",
     "body-parser": "^1.20.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "express": "^5.1.0"
   }
 }
