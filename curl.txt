@@ -1,0 +1,9 @@
+curl -X POST "https://graph.facebook.com/v20.0/254754769847/messages" \
+  -H "Authorization: Bearer $WHATSAPP_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "messaging_product": "whatsapp",
+    "to": "254113741457",
+    "type": "text",
+    "text": { "body": "👋 Hello from Dapper Drip Collections bot!" }
+  }'
